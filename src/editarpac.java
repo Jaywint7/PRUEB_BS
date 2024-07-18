@@ -3,77 +3,80 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.*;
 
-public class nuevoPaciente extends JFrame{
+public class editarpac extends JFrame {
+    private JTextField txtCedula;
+    private JButton buscarButton;
     private JTextField txtHC;
     private JTextField txtnom;
     private JTextField txtape;
-    private JTextField txttelf;
     private JTextField txtDE;
     private JButton registrarButton;
-    private JButton menuButton;
-    private JPanel JPanel_reg;
-    private JTextField txtcedula;
+    private JButton loginButton;
+    private JPanel JPanel_ed;
+    private JTextField txttelf;
     private JTextField txtedad;
 
-    public nuevoPaciente(){
-        super("Registrar");
+    public editarpac(){
+        super("Actualizar");
         setSize(600,400);
         setLocationRelativeTo(null);
-        setContentPane(JPanel_reg);
+        setContentPane(JPanel_ed);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         registrarButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                menu menu = new menu();
+                menu.setVisible(true);
+                dispose();
+            }
+        });
+        buscarButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
                 try {
-                    registrar();
+                    editar();
                 } catch (SQLException ex) {
                     throw new RuntimeException(ex);
                 }
             }
         });
-        menuButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                menu nuevo = new menu();
-                nuevo.setVisible(true);
-                dispose();
-            }
-        });
     }
 
-    public void registrar() throws SQLException {
-        String cedula = txtcedula.getText();
+    public void editar() throws SQLException{
+        String cedula = txtCedula.getText();
         String hc = txtHC.getText();
         String nombre = txtnom.getText();
         String apellido = txtape.getText();
         String telefono = txttelf.getText();
         String edad = txtedad.getText();
         String de = txtDE.getText();
-        Connection conectar = conexion();
-        String sql = "INSERT INTO paciente(cedula, n_historial_clinico, nombre, apellido, telefono, edad, descripcion_enfermedad)value(?,?,?,?,?,?,?)";
-        PreparedStatement st = conectar.prepareStatement(sql);
-        st.setString(1,cedula);
-        st.setString(2,hc);
-        st.setString(3,nombre);
-        st.setString(4,apellido);
-        st.setString(5,telefono);
-        st.setString(6,edad);
-        st.setString(7,de);
 
-        int rowsAffected=st.executeUpdate();
-        if ( (rowsAffected > 0)) {
-            JOptionPane.showMessageDialog(null, "REGISTRO INSERTADO CORRECTAMENTE");
-            txtcedula.setText("");
+        Connection conectar = conexion();
+        String sql = "UPDATE paciente SET n_historial_clinico = ?, nombre = ?, apellido = ?, telefono = ?, edad = ?, descripcion_enfermedad = ? WHERE cedula = ?";
+        PreparedStatement st = conectar.prepareStatement(sql);
+
+        st.setString(1, hc);
+        st.setString(2, nombre);
+        st.setString(3, apellido);
+        st.setString(4, telefono);
+        st.setString(5, edad);
+        st.setString(6, de);
+        st.setString(7, cedula);
+
+        int rowsAffected = st.executeUpdate();
+        if (rowsAffected > 0) {
+            JOptionPane.showMessageDialog(null, "REGISTRO ACTUALIZADO CORRECTAMENTE");
             txtHC.setText("");
             txtnom.setText("");
             txtape.setText("");
             txttelf.setText("");
             txtedad.setText("");
             txtDE.setText("");
-        }else{
-            JOptionPane.showMessageDialog(null, "EROR EN EL REGISTRO");
+        } else {
+            JOptionPane.showMessageDialog(null, "NO SE ENCONTRO NINGUN REGISTRO CON LA CEDULA PROPORCIONADA");
         }
+
         st.close();
         conectar.close();
     }

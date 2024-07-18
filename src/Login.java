@@ -1,4 +1,5 @@
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.*;
@@ -32,19 +33,19 @@ public class Login extends JFrame{
         String user = txtusu.getText();
         String pswd = txtcontra.getText();
         Connection conectar = conexion();
-        String sql = "SELECT * FORM usuario WHERE username = ? AND password=?";
+        String sql = "SELECT * FROM usuario WHERE username = ? AND password = ?";
         PreparedStatement st = conectar.prepareStatement(sql);
             st.setString(1, user);
             st.setString(2, pswd);
         ResultSet rs = st.executeQuery();
 
         if(rs.next()){
-            JOptionPane.showMessageDialog(null,"Credenciales Correctas");
-            nuevoPaciente nuevo = new nuevoPaciente();
+            JOptionPane.showMessageDialog(null,"CREDENCIALES CORRECTAS");
+            menu nuevo = new menu();
             nuevo.setVisible(true);
             dispose();
         }else{
-            JOptionPane.showMessageDialog(null,"Credenciales Incorrectas");
+            JOptionPane.showMessageDialog(null,"CREDENCIALES INCORRECTAS");
         }
         rs.close();
         st.close();
